@@ -12,6 +12,8 @@ import { Department } from './department/entities/department.entity';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { MailModule } from './mail/mail.module';
+import { LocationModule } from './location/location.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { join } from 'path';
 
 
@@ -41,6 +43,8 @@ import { join } from 'path';
     AuthModule,
     AdminModule,
     MailModule,
+    LocationModule,
+    DashboardModule,
     ],
   controllers: [],
   providers: [],

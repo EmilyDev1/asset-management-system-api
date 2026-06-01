@@ -1,50 +1,74 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+import { AssetCategory, AssetStatus } from "../entities/asset.entity";
 
 export class CreateAssetDto {
-
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    deviceName:string
+    deviceName: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    color:string
+    @IsOptional()
+    @IsEnum(AssetStatus)
+    @ApiPropertyOptional({ enum: AssetStatus, default: AssetStatus.PENDING })
+    status?: AssetStatus;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    brand:string
+    @IsOptional()
+    @IsEnum(AssetCategory)
+    @ApiPropertyOptional({ enum: AssetCategory, default: AssetCategory.OTHER })
+    category?: AssetCategory;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    model:string
+    @IsOptional()
+    @ApiPropertyOptional({ description: 'Next maintenance date (ISO)' })
+    nextMaintenance?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    serialnumber:string
+    @IsOptional()
+    @IsUUID()
+    @ApiPropertyOptional({ description: 'Location ID' })
+    locationId?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    processor:string
+    @IsOptional()
+    @IsUUID()
+    @ApiPropertyOptional({ description: 'Assigned user ID' })
+    userId?: string;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    hdd_ssd_size:string
+    @ApiPropertyOptional()
+    color?: string;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    ramsize:string
+    @ApiPropertyOptional()
+    brand?: string;
 
+    @IsOptional()
     @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    condition:string
+    @ApiPropertyOptional()
+    model?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiPropertyOptional()
+    serialnumber?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiPropertyOptional()
+    processor?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiPropertyOptional()
+    hdd_ssd_size?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiPropertyOptional()
+    ramsize?: string;
+
+    @IsOptional()
+    @IsString()
+    @ApiPropertyOptional()
+    condition?: string;
 }

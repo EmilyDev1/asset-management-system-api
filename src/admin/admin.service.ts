@@ -36,7 +36,7 @@ export class AdminService {
 
       if (!user) {
         throw new HttpException(
-          "Wrong credentials provided",
+          "Incorrect email address or password",
           HttpStatus.BAD_REQUEST
         );
       }
@@ -57,7 +57,7 @@ export class AdminService {
       };
     } catch (error) {
       throw new HttpException(
-        "Wrong credentials provided",
+        "Incorrect email address or password",
         HttpStatus.BAD_REQUEST
       );
     }
@@ -147,33 +147,58 @@ export class AdminService {
       );
       if (!isPasswordMatching) {
         throw new HttpException(
-          "Wrong credentials provided",
+          "Incorrect email address or password",
           HttpStatus.BAD_REQUEST
         );
       }
     } catch (error) {
       throw new HttpException(
-        "Wrong credentials provided",
+        "Incorrect email address or password",
         HttpStatus.BAD_REQUEST
       );
     }
   }
 
+  async verifyAdminPassword(adminId: string, plainTextPassword: string): Promise<boolean> {
+    const admin = await this.adminRepo.findOne({ where: { id: adminId } });
+    if (!admin?.password) return false;
+    try {
+      return await argon2.verify(admin.password, plainTextPassword);
+    } catch {
+      return false;
+    }
+  }
+
   async resetPassword(resetPassDto: ResetPasswordAdminDto) {
-    const user = await this.adminRepo.findOneOrFail({
+    const genericResponse = {
+      message:
+        'If an account exists for that email, a new password has been sent.',
+    };
+
+    const user = await this.adminRepo.findOne({
       where: { emailaddress: resetPassDto.email },
     });
+
     if (!user) {
-      throw new HttpException("Invalid Email Address", HttpStatus.UNAUTHORIZED);
+      // Do not leak whether the email is registered.
+      return genericResponse;
     }
+
     const password = await this.genPassword();
-    const newpassword = await argon2.hash(password, 10);
-    await this.adminRepo.update(user.id, { password: newpassword });
-    await this.mailService.sendadminConfirmation(user, password);
-    return new HttpException(
-      "New Password send to your email",
-      HttpStatus.ACCEPTED
-    );
+    const hashed = await argon2.hash(password);
+    await this.adminRepo.update(user.id, { password: hashed });
+
+    try {
+      await this.mailService.sendresetPassword(user, password);
+    } catch (err) {
+      console.error('Password reset email failed to send:', err);
+      throw new HttpException(
+        'Could not send reset email. Please contact support.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return genericResponse;
   }
 
   async saveorupdateRefreshToke(
