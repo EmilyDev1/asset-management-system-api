@@ -33,6 +33,9 @@ export class Admin {
     @Exclude({ toPlainOnly: true})
     password: string;
 
+    @Column({default:false, nullable:true})
+    firstTimeLOgin: boolean;
+
     @Column({ type: String, nullable:true })
     refreshToken: string;
 

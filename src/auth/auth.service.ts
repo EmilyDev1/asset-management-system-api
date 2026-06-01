@@ -36,7 +36,7 @@ export class AuthService {
   catch(error){
     console.error(error)
     throw new HttpException(
-      "Wrong credentials", HttpStatus.BAD_REQUEST
+      "Incorrect email address or password", HttpStatus.BAD_REQUEST
     );
   }
  }
@@ -68,7 +68,7 @@ export class AuthService {
     const isPasswordMatching=await argon2.verify(hashedPassword,plainTextPassword);
 
     if(!isPasswordMatching){
-      throw new HttpException("Wrong credentials", HttpStatus.BAD_REQUEST);
+      throw new HttpException("Incorrect email address or password", HttpStatus.BAD_REQUEST);
     }
   }
   

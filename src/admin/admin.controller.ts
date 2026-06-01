@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, BadRequestException } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
@@ -9,6 +9,7 @@ import { UpdateStatusAdminDto } from './dto/update-admin-status.dto';
 import { ChangePasswordAdminDto } from './dto/change-password-admin.dto';
 import { GetCurrentAdminId } from 'src/decorators/get-current-admin-id.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { SetPasswordDto } from './dto/set-password.dto';
 
 //@ApiBearerAuth()
 @ApiTags('Admin')
@@ -51,9 +52,16 @@ export class AdminController {
   status(@Param('id') id: string, @Body() updateStatusAdminDto: UpdateStatusAdminDto) {
     return this.adminService.status(id, updateStatusAdminDto);
   }
+  // @Patch('set-password')
+  // async setPassword(@Body() setDto: SetPasswordDto) {
+  //   const admin = await this.adminRepository.findOne({ where: {id: setDto.id} });
+
+  //   if (!admin || !admin.firstTimeLogin) {
+  //     throw new BadRequestException('Invalid ');
+  //   }
+  // }
 
   @Patch('reset/password')
-  @UseGuards(JwtAuthGuard)
   resetpassword(@Body() resetDto: ResetPasswordAdminDto) {
     return this.adminService.resetPassword(resetDto);
   }
